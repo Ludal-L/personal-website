@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人网页</title>
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #0a0a0a, #1a1a1a); /* 渐变背景 */
+            color: #ffffff; /* 文字颜色为白色 */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(0, 0, 0, 0.8); /* 半透明黑色背景 */
+            padding: 15px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffcc00; /* 鼠标悬停时变色 */
+        }
+
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 个人介绍部分 */
+        .intro {
+            display: flex;
+            align-items: center;
+            gap: 40px; /* 文字和图片之间的间距 */
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+        }
+
+        .intro .text {
+            flex: 1; /* 文字部分占据剩余空间 */
+            text-align: left; /* 文字左对齐 */
+        }
+
+        .intro h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            text-transform: uppercase; /* 大写字母 */
+            letter-spacing: 2px; /* 字间距 */
+        }
+
+        .intro p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ccc; /* 浅灰色文字 */
+        }
+
+        .intro .photo {
+            flex-shrink: 0; /* 防止图片被压缩 */
+            width: 200px; /* 图片宽度 */
+            height: 200px; /* 图片高度 */
+            border-radius: 15px; /* 图片圆角 */
+            overflow: hidden; /* 隐藏超出部分 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+        }
+
+        .intro .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 图片填充 */
+        }
+
+        /* 作品展示部分 */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* 图片和视频之间的间距 */
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .gallery h2 {
+            width: 100%;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .gallery .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px; /* 上下两排之间的间距 */
+        }
+
+        .gallery img {
+            width: 100%;
+            max-width: 300px; /* 图片最大宽度 */
+            height: auto;
+            border-radius: 10px; /* 图片圆角 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 悬停效果 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+            cursor: pointer; /* 鼠标悬停时显示手型 */
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05); /* 鼠标悬停时放大 */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); /* 悬停时阴影加深 */
+        }
+
+        .gallery video {
+            width: 100%;
+            max-width: 600px; /* 视频最大宽度 */
+            height: auto;
+            border-radius: 10px; /* 视频圆角 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+        }
+
+        /* 图片放大效果 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* 黑色半透明背景 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+
+        .overlay.active {
+            display: flex; /* 显示放大图片 */
+        }
+
+        /* 更多按钮样式 */
+        .more-btn {
+            text-align: center;
+            margin: 30px 0; /* 上下间距 */
+        }
+
+        .more-btn a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffcc00; /* 按钮背景色 */
+            color: #000; /* 按钮文字颜色 */
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .more-btn a:hover {
+            background-color: #e6b800; /* 鼠标悬停时按钮变色 */
+        }
+
+        /* 个人履历部分 */
+        .resume {
+            background-color: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+            margin-bottom: 50px;
+        }
+
+        .resume h2 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .resume ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .resume ul li {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ccc; /* 浅灰色文字 */
+        }
+
+        .resume ul li strong {
+            color: #ffcc00; /* 强调文字颜色 */
+        }
+
+        /* 联系方式部分 */
+        .contact {
+            background-color: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .contact ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .contact ul li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .contact ul li i {
+            color: #ffcc00; /* 图标颜色 */
+            font-size: 24px;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .intro {
+                flex-direction: row; /* 保持左右布局 */
+                gap: 20px; /* 缩小间距 */
+            }
+
+            .intro .photo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .gallery img {
+                max-width: 100%;
+            }
+
+            .gallery video {
+                max-width: 100%;
+            }
+
+            .contact ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav>
+        <a href="#intro">个人介绍</a>
+        <a href="#gallery">作品展示</a>
+        <a href="#resume">个人履历</a>
+        <a href="#contact" class="btn">联系我</a> <!-- 按钮样式 -->
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <!-- 个人介绍 -->
+        <section id="intro" class="intro">
+            <div class="text">
+                <h1>欢迎来到我的个人网页</h1>
+                <p>你好！我是鲁闯，一名C4D设计师。这里展示了我的一些作品，包括渲染作品和视频作品。希望你喜欢！</p>
+            </div>
+            <div class="photo">
+                <img src="https://gd-hbimg.huaban.com/4a554fc43a98d84959ce249ca9e9f870d3e1cf0d10db4-Jx2yBY" alt="个人形象照片"> <!-- 替换为你的照片路径 -->
+            </div>
+        </section>
+
+        <!-- 作品展示 -->
+        <section id="gallery" class="gallery">
+            <h2>图片作品</h2>
+            <div class="row">
+                <img src="https://gd-hbimg.huaban.com/197e57ebd93782d5b21a2cbf6a91e8272f1c1da25b3d4-QixHQ4" alt="图片作品1"onclick="openOverlay('https://gd-hbimg.huaban.com/197e57ebd93782d5b21a2cbf6a91e8272f1c1da25b3d4-QixHQ4')"> <!-- 替换为你的图片路径 -->
+                <img src="https://gd-hbimg.huaban.com/6598ef7c7957a9b7e424aa715aad40479735d1d857997-I5wyZJ" alt="图片作品2" onclick="openOverlay('https://gd-hbimg.huaban.com/6598ef7c7957a9b7e424aa715aad40479735d1d857997-I5wyZJ')"> <!-- 替换为你的图片路径 -->
+                <img src="https://gd-hbimg.huaban.com/bc7abe63a484092379cbae2449b56133262cb48b48981-8eODkt" alt="图片作品3" onclick="openOverlay('https://gd-hbimg.huaban.com/bc7abe63a484092379cbae2449b56133262cb48b48981-8eODkt')"> <!-- 替换为你的图片路径 -->
+            </div>
+            <div class="row">
+                <img src="https://gd-hbimg.huaban.com/3a00e8ebb70bbc966524ee200a8e4f00b0a977098d75c-QI1D1g" alt="图片作品4" onclick="openOverlay('https://gd-hbimg.huaban.com/3a00e8ebb70bbc966524ee200a8e4f00b0a977098d75c-QI1D1g')"> <!-- 替换为你的图片路径 -->
+                <img src="https://gd-hbimg.huaban.com/57c3afe59e310241d3b01d89b85ade4da6d7437c554d6-5rmFjm" alt="图片作品5" onclick="openOverlay('https://gd-hbimg.huaban.com/57c3afe59e310241d3b01d89b85ade4da6d7437c554d6-5rmFjm')"> <!-- 替换为你的图片路径 -->
+                <img src="https://gd-hbimg.huaban.com/335131465c619f08b6de8f09de1e0378af0ba37856286-rALDqn" alt="图片作品6" onclick="openOverlay('https://gd-hbimg.huaban.com/335131465c619f08b6de8f09de1e0378af0ba37856286-rALDqn')"> <!-- 替换为你的图片路径 -->
+            </div>
+
+            <!-- 更多按钮 -->
+            <div class="more-btn">
+                <a href="https://www.example.com" target="_blank">更多作品</a> <!-- 替换为你的链接 -->
+            </div>
+
+            <h2>视频作品</h2>
+            <video controls>
+                <source src="https://1318328187.vod2.myqcloud.com/3dcdd3b3vodsh1318328187/ae3893663270835009173349845/46218ZaRVKgA.mp4" type="video/mp4"> <!-- 替换为你的视频路径 -->
+                您的浏览器不支持视频播放。
+            </video>
+            <video controls>
+                <source src="https://1318328187.vod2.myqcloud.com/3dcdd3b3vodsh1318328187/025293233270835009174662429/YpyVrj3L4SgA.mp4" type="video/mp4"> <!-- 替换为你的视频路径 -->
+                您的浏览器不支持视频播放。
+            </video>
+            <video controls>
+                <source src="https://1318328187.vod2.myqcloud.com/3dcdd3b3vodsh1318328187/d6b47e7f3270835009139842019/MqKAHCeimAIA.mp4" type="video/mp4"> <!-- 替换为你的视频路径 -->
+                您的浏览器不支持视频播放。
+            </video>
+            <video controls>
+                <source src="https://1318328187.vod2.myqcloud.com/3dcdd3b3vodsh1318328187/b56b77813270835009173674092/FSQGy5Ae82oA.mp4" type="video/mp4"> <!-- 替换为你的视频路径 -->
+                您的浏览器不支持视频播放。
+            </video>
+        </section>
+
+        <!-- 个人履历 -->
+        <section id="resume" class="resume">
+            <h2>个人履历</h2>
+            <ul>
+                <li><strong>2021 - 至今</strong> | [公司名称] | [职位]</li>
+                <li><strong>2018 - 2021</strong> | [公司名称] | [职位]</li>
+                <li><strong>2015 - 2018</strong> | [公司名称] | [职位]</li>
+                <li><strong>2011 - 2015</strong> | [学校名称] | [专业]</li>
+            </ul>
+        </section>
+
+        <!-- 联系方式 -->
+        <section id="contact" class="contact">
+            <h2>联系方式</h2>
+            <ul>
+                <li><i class="fas fa-phone"></i>电话：13176689913</li>
+                <li><i class="fas fa-envelope"></i>邮箱：1146952100@qq.com</li>
+                <li><i class="fab fa-weixin"></i>微信：Ludal666</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 图片放大效果 -->
+    <div class="overlay" onclick="closeOverlay()">
+        <img id="overlay-img" src="" alt="放大图片">
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 [鲁闯]. 保留所有权利。</p>
+    </footer>
+
+    <script>
+        // 打开放大图片
+        function openOverlay(src) {
+            const overlay = document.querySelector('.overlay');
+            const overlayImg = document.getElementById('overlay-img');
+            overlayImg.src = src;
+            overlay.classList.add('active');
+        }
+
+        // 关闭放大图片
+        function closeOverlay() {
+            const overlay = document.querySelector('.overlay');
+            overlay.classList.remove('active');
+        }
+    </script>
+
+</body>
+</html>
